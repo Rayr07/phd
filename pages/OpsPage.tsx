@@ -1,1 +1,1 @@
-<Button style={{ fontSize: 'large', letterSpacing: '-0.5px' }}>Execute ${project.mode} analysis</Button>
+<Button style={{ fontSize: 'small' }}>Execute ${project.mode} analysis</Button>
