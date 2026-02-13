@@ -319,7 +319,7 @@ const OpsPage: React.FC = () => {
               <button
                 onClick={handleRunAnalysis}
                 disabled={isAnalyzing || !canRunAnalysis()}
-                className="w-full py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-10 disabled:grayscale disabled:cursor-not-allowed"
+                className="w-full py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center disabled:opacity-10 disabled:grayscale disabled:cursor-not-allowed"
                 style={{ backgroundColor: brandColor, color: colors.background }}
               >
                 {isAnalyzing ? (
