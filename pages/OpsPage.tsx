@@ -365,15 +365,7 @@ const OpsPage: React.FC = () => {
               <button 
                 onClick={handleAnalyze}
                 disabled={isLoading}
-                className="px-6 py-3 text-xs font-black 
-                            text-lsecondary 
-                            dark:text-[#5F9598] 
-                            border-2 border-lsecondary/10 
-                            hover:border-lsecondary/40 
-                            dark:border-gray-700 
-                            rounded-xl transition-all 
-                            flex items-center gap-2 
-                            uppercase tracking-[0.2em]"
+                className="w-full py-6 bg-lsecondary dark:bg-[#] text-white dark:text-dtext rounded-[1.5rem] font-black text-xl shadow-2xl hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-6 uppercase tracking-[0.3em]"
                 >
                 {isLoading ? (
                   <>
