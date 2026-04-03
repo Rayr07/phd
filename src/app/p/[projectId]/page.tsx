@@ -76,7 +76,10 @@ export default function ProjectOperationsPage() {
 
   const syncPaperCount = async (count: number) => {
     if (!projectId.startsWith('mock')) {
-      await supabase.from('projects').update({ paper_count: count }).eq('id', projectId)
+      console.log(`Attempting to sync paper count to database: ${count}`)
+      const { error } = await supabase.from('projects').update({ paper_count: count }).eq('id', projectId)
+      if (error) console.error("Failed to update paper count in Supabase:", error)
+      else console.log("Paper count successfully updated in Supabase!")
     }
   }
 
@@ -98,6 +101,7 @@ export default function ProjectOperationsPage() {
             console.error("Storage upload failed: ", error)
         }
       }
+      console.log("Finished uploading all selected files. New storage array:", newStorageFiles)
       setUploadedFiles(newStorageFiles)
       syncPaperCount(newStorageFiles.length)
       setLoading(false)
@@ -139,7 +143,9 @@ export default function ProjectOperationsPage() {
     
     // Remove from storage
     const path = `${userId}/${projectId}/repo/${fileName}`
-    await supabase.storage.from('project_files').remove([path])
+    const { error } = await supabase.storage.from('project_files').remove([path])
+    if (error) console.error("Failed to delete file from Supabase Storage:", error)
+    else console.log(`Deleted ${fileName} from Storage successfully.`)
     
     // Update local state
     const newFiles = uploadedFiles.filter((f) => f.name !== fileName)

@@ -62,6 +62,7 @@ export default function WorkspacePage() {
             bookmarked: p.bookmarked,
             paperCount: Math.max(0, p.paper_count || 0)
         }))
+        console.log("Successfully fetched projects from Supabase. Mapped State:", mappedProjects)
         setProjects(mappedProjects)
       }
     }

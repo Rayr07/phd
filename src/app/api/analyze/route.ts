@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     // 1. Enforce Authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
-        return NextResponse.json({ error: 'Unauthorized user.' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized user.' }, { status: 401 })
     }
 
     const payload = await req.json()
@@ -24,48 +24,48 @@ export async function POST(req: Request) {
 
     // Helper to download securely from Supabase Storage and push to buffer array
     async function downloadAndInject(path: string, prefixText: string) {
-        const { data, error } = await supabase.storage.from('project_files').download(path)
-        if (error || !data) {
-            console.error("Failed to download file:", path, error)
-            messageContent.push({ type: 'text', text: `[Warning: Core Document Failed to Download - ${path}]` })
-            return
-        }
+      const { data, error } = await supabase.storage.from('project_files').download(path)
+      if (error || !data) {
+        console.error("Failed to download file:", path, error)
+        messageContent.push({ type: 'text', text: `[Warning: Core Document Failed to Download - ${path}]` })
+        return
+      }
 
-        const arrayBuffer = await data.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-        
-        messageContent.push({ type: 'text', text: prefixText })
-        messageContent.push({ 
-            type: 'file', 
-            mediaType: 'application/pdf', 
-            data: buffer 
-        })
+      const arrayBuffer = await data.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+
+      messageContent.push({ type: 'text', text: prefixText })
+      messageContent.push({
+        type: 'file',
+        mediaType: 'application/pdf',
+        data: buffer
+      })
     }
 
     // 3. Inject Repository PDFs (Reference Literature)
     if (repoFiles && repoFiles.length > 0) {
-        messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE (Ground Truth) ---' })
-        // Fetch files consecutively
-        for (const fileName of repoFiles) {
-            const filePath = `${user.id}/${projectId}/repo/${fileName}`
-            await downloadAndInject(filePath, `Reference Document: ${fileName}\n`)
-        }
+      messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE (Ground Truth) ---' })
+      // Fetch files consecutively
+      for (const fileName of repoFiles) {
+        const filePath = `${user.id}/${projectId}/repo/${fileName}`
+        await downloadAndInject(filePath, `Reference Document: ${fileName}\n`)
+      }
     } else {
-        messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE: None Provided ---' })
+      messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE: None Provided ---' })
     }
 
     // 4. Inject User Uploaded PDF (Test Document)
     if (userFile) {
-        messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT / PAPER UNDER REVIEW ---' })
-        const filePath = `${user.id}/${projectId}/user/${userFile}`
-        await downloadAndInject(filePath, `User Document: ${userFile}\n`)
+      messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT / PAPER UNDER REVIEW ---' })
+      const filePath = `${user.id}/${projectId}/user/${userFile}`
+      await downloadAndInject(filePath, `User Document: ${userFile}\n`)
     } else {
-        messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT: None Provided ---' })
+      messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT: None Provided ---' })
     }
 
     // Append user focus context
     if (context) {
-        messageContent.push({ type: 'text', text: `\n\nUser Notes / Focus Context: ${context}` })
+      messageContent.push({ type: 'text', text: `\n\nUser Notes / Focus Context: ${context}` })
     }
 
     // 5. Structure AI System Instructions
@@ -85,13 +85,13 @@ export async function POST(req: Request) {
 
     // 6. Generate Supercompute output payload
     const { text: result } = await generateText({
-      model: google('gemini-1.5-pro'),
+      model: google('gemini-2.5-flash'),
       system: systemInstruction,
       messages: [
-          {
-              role: 'user',
-              content: messageContent
-          }
+        {
+          role: 'user',
+          content: messageContent
+        }
       ]
     })
 
