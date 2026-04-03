@@ -53,16 +53,23 @@ export default function WorkspacePage() {
         ])
       } else if (data) {
         setDbError(false)
-        const enrichedProjects = data.map((p) => {
+        const enrichedProjects = await Promise.all(data.map(async (p) => {
+          let count = Math.max(0, p.paper_count) // Wait, if it's local, we use localforage directly
+          // Just to be safe, we will sync UI accurately with localforage repository files
+          try {
+            const files = await localforage.getItem<File[]>(`repo_files_${p.id}`)
+            if (files && files.length >= 0) count = files.length
+          } catch(e) {}
+
           return {
             id: p.id,
             name: p.name,
             createdAt: p.created_at,
             updatedAt: p.updated_at,
             bookmarked: p.bookmarked,
-            paperCount: Math.max(0, p.paper_count || 0)
+            paperCount: count
           }
-        })
+        }))
         setProjects(enrichedProjects)
       }
     }
