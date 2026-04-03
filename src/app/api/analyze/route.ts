@@ -1,57 +1,74 @@
 import { NextResponse } from 'next/server'
 import { generateText } from 'ai'
 import { google } from '@ai-sdk/google'
+import { createClient } from '@/utils/supabase/server'
 
 export const maxDuration = 60; // Increase serverless timeout for heavy PDFs
+export const dynamic = "force-dynamic"; // Bypass Vercel 404 caching lock
 
 export async function POST(req: Request) {
   try {
-    const formData = await req.formData()
-    const operation = formData.get('operation') as string
-    const domain = formData.get('domain') as string
-    const contextStr = formData.get('context') as string
+    const supabase = await createClient()
 
-    // Extract PDFs
-    const repoFiles = formData.getAll('repoFiles') as File[]
-    const userFile = formData.get('userFile') as File | null
+    // 1. Enforce Authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized user.' }, { status: 401 })
+    }
 
-    // We will securely pass PDFs to Gemini's native multimodal file interface.
+    const payload = await req.json()
+    const { operation, domain, context, projectId, repoFiles, userFile } = payload
+
+    // 2. We securely pass PDFs to Gemini's native multimodal file interface.
     const messageContent: any[] = []
 
-    // Helper to add files to content array
-    async function addFileToContent(file: File, prefixText: string) {
-      const arrayBuffer = await file.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
+    // Helper to download securely from Supabase Storage and push to buffer array
+    async function downloadAndInject(path: string, prefixText: string) {
+        const { data, error } = await supabase.storage.from('project_files').download(path)
+        if (error || !data) {
+            console.error("Failed to download file:", path, error)
+            messageContent.push({ type: 'text', text: `[Warning: Core Document Failed to Download - ${path}]` })
+            return
+        }
 
-      messageContent.push({ type: 'text', text: prefixText })
-      messageContent.push({
-        type: 'file',
-        mediaType: 'application/pdf',
-        data: buffer
-      })
+        const arrayBuffer = await data.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+        
+        messageContent.push({ type: 'text', text: prefixText })
+        messageContent.push({ 
+            type: 'file', 
+            mediaType: 'application/pdf', 
+            data: buffer 
+        })
     }
 
-    if (repoFiles.length > 0) {
-      messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE (Ground Truth) ---' })
-      for (const file of repoFiles) {
-        await addFileToContent(file, `Reference Document: ${file.name}\n`)
-      }
+    // 3. Inject Repository PDFs (Reference Literature)
+    if (repoFiles && repoFiles.length > 0) {
+        messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE (Ground Truth) ---' })
+        // Fetch files consecutively
+        for (const fileName of repoFiles) {
+            const filePath = `${user.id}/${projectId}/repo/${fileName}`
+            await downloadAndInject(filePath, `Reference Document: ${fileName}\n`)
+        }
     } else {
-      messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE: None Provided ---' })
+        messageContent.push({ type: 'text', text: '--- REFERENCE LITERATURE: None Provided ---' })
     }
 
+    // 4. Inject User Uploaded PDF (Test Document)
     if (userFile) {
-      messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT / PAPER UNDER REVIEW ---' })
-      await addFileToContent(userFile, `User Document: ${userFile.name}\n`)
+        messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT / PAPER UNDER REVIEW ---' })
+        const filePath = `${user.id}/${projectId}/user/${userFile}`
+        await downloadAndInject(filePath, `User Document: ${userFile}\n`)
     } else {
-      messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT: None Provided ---' })
+        messageContent.push({ type: 'text', text: '\n\n--- THE USER TEXT: None Provided ---' })
     }
 
-    // Append context
-    if (contextStr) {
-      messageContent.push({ type: 'text', text: `\n\nUser Notes / Focus Context: ${contextStr}` })
+    // Append user focus context
+    if (context) {
+        messageContent.push({ type: 'text', text: `\n\nUser Notes / Focus Context: ${context}` })
     }
 
+    // 5. Structure AI System Instructions
     let systemInstruction = ''
     if (operation === 'contradiction') {
       systemInstruction = `You are a strict academic reviewer for the domain of ${domain}. Detect explicit contradictions, unsupported claims, or methodology mismatches between the provided User Document and the Reference Literature.`
@@ -66,14 +83,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid operation type' }, { status: 400 })
     }
 
+    // 6. Generate Supercompute output payload
     const { text: result } = await generateText({
-      model: google('gemini-2.5-flash'),
+      model: google('gemini-1.5-pro'),
       system: systemInstruction,
       messages: [
-        {
-          role: 'user',
-          content: messageContent
-        }
+          {
+              role: 'user',
+              content: messageContent
+          }
       ]
     })
 

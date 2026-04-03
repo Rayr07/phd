@@ -7,9 +7,13 @@ import { ArrowLeft, UploadCloud, Edit3, Loader2, Sparkles, FileSearch, Scale } f
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import localforage from 'localforage'
 
 type OperationType = 'contradiction' | 'validation' | 'hypothesis'
+
+interface StorageFile {
+  name: string
+  metadata?: any
+}
 
 export default function ProjectOperationsPage() {
   const params = useParams()
@@ -18,11 +22,12 @@ export default function ProjectOperationsPage() {
 
   const [projectName, setProjectName] = useState('Untitled Project')
   const [isEditingName, setIsEditingName] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
   
   const [activeTab, setActiveTab] = useState<OperationType>('contradiction')
   
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const [userPaperFile, setUserPaperFile] = useState<File | null>(null)
+  const [uploadedFiles, setUploadedFiles] = useState<StorageFile[]>([])
+  const [userPaperFile, setUserPaperFile] = useState<StorageFile | null>(null)
   
   const [domain, setDomain] = useState('')
   const [contextInput, setContextInput] = useState('')
@@ -31,51 +36,92 @@ export default function ProjectOperationsPage() {
   const [result, setResult] = useState<string | null>(null)
 
   useEffect(() => {
-    // Fetch project title
-    async function loadProject() {
+    async function init() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      setUserId(user.id)
+
       if (!projectId.startsWith('mock')) {
-        const { data } = await supabase.from('projects').select('name').eq('id', projectId).single()
-        if (data) setProjectName(data.name)
+        // Fetch project metadata
+        const { data: projData } = await supabase.from('projects').select('name, domain, ai_output').eq('id', projectId).single()
+        if (projData) {
+          setProjectName(projData.name)
+          if (projData.domain) setDomain(projData.domain)
+          if (projData.ai_output) setResult(projData.ai_output)
+        }
+
+        // Fetch files from Storage
+        const { data: repoData } = await supabase.storage.from('project_files').list(`${user.id}/${projectId}/repo`)
+        if (repoData) {
+          // Filter out the empty folder placeholder if any
+          setUploadedFiles(repoData.filter(f => f.name !== '.emptyFolderPlaceholder'))
+        }
+
+        const { data: userData } = await supabase.storage.from('project_files').list(`${user.id}/${projectId}/user`)
+        if (userData && userData.length > 0) {
+          const actualFiles = userData.filter(f => f.name !== '.emptyFolderPlaceholder')
+          if (actualFiles.length > 0) setUserPaperFile(actualFiles[0])
+        }
       }
     }
-    loadProject()
-
-    // Load persisted files and state from localforage
-    async function loadLocalForage() {
-      const files = await localforage.getItem<File[]>(`repo_files_${projectId}`)
-      if (files) setUploadedFiles(files)
-
-      const userFile = await localforage.getItem<File>(`user_file_${projectId}`)
-      if (userFile) setUserPaperFile(userFile)
-        
-      const savedOutput = await localforage.getItem<string>(`ai_output_${projectId}`)
-      if (savedOutput) setResult(savedOutput)
-        
-      const savedDomain = await localforage.getItem<string>(`domain_${projectId}`)
-      if (savedDomain) setDomain(savedDomain)
-    }
-    loadLocalForage()
+    init()
   }, [projectId])
 
   const handleDomainChange = async (val: string) => {
     setDomain(val)
-    await localforage.setItem(`domain_${projectId}`, val)
+    if (!projectId.startsWith('mock')) {
+      await supabase.from('projects').update({ domain: val }).eq('id', projectId)
+    }
+  }
+
+  const syncPaperCount = async (count: number) => {
+    if (!projectId.startsWith('mock')) {
+      await supabase.from('projects').update({ paper_count: count }).eq('id', projectId)
+    }
   }
 
   const handleRepoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFiles = [...uploadedFiles, ...Array.from(e.target.files)]
-      setUploadedFiles(newFiles)
-      // Persist
-      await localforage.setItem(`repo_files_${projectId}`, newFiles)
+    if (e.target.files && e.target.files.length > 0 && userId && !projectId.startsWith('mock')) {
+      setLoading(true)
+      const newStorageFiles: StorageFile[] = [...uploadedFiles]
+      
+      for (const file of Array.from(e.target.files)) {
+        const path = `${userId}/${projectId}/repo/${file.name}`
+        const { data, error } = await supabase.storage.from('project_files').upload(path, file, { upsert: true })
+        
+        if (!error) {
+          const { data: fileStat } = await supabase.storage.from('project_files').list(`${userId}/${projectId}/repo`, { search: file.name })
+          if (fileStat && fileStat.length > 0) {
+            newStorageFiles.push(fileStat[0] as StorageFile)
+          }
+        } else {
+            console.error("Storage upload failed: ", error)
+        }
+      }
+      setUploadedFiles(newStorageFiles)
+      syncPaperCount(newStorageFiles.length)
+      setLoading(false)
     }
   }
 
   const handleUserPaperUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+    if (e.target.files && e.target.files.length > 0 && userId && !projectId.startsWith('mock')) {
+      setLoading(true)
       const file = e.target.files[0]
-      setUserPaperFile(file)
-      await localforage.setItem(`user_file_${projectId}`, file)
+      const path = `${userId}/${projectId}/user/${file.name}`
+      
+      // Delete existing user file to cleanly replace it
+      if (userPaperFile) {
+         await supabase.storage.from('project_files').remove([`${userId}/${projectId}/user/${userPaperFile.name}`])
+      }
+
+      await supabase.storage.from('project_files').upload(path, file, { upsert: true })
+      
+      const { data: fileStat } = await supabase.storage.from('project_files').list(`${userId}/${projectId}/user`, { search: file.name })
+      if (fileStat && fileStat.length > 0) {
+        setUserPaperFile(fileStat[0] as StorageFile)
+      }
+      setLoading(false)
     }
   }
 
@@ -88,6 +134,19 @@ export default function ProjectOperationsPage() {
     }
   }
 
+  const handleRemoveRepoFile = async (fileName: string) => {
+    if (!userId || projectId.startsWith('mock')) return
+    
+    // Remove from storage
+    const path = `${userId}/${projectId}/repo/${fileName}`
+    await supabase.storage.from('project_files').remove([path])
+    
+    // Update local state
+    const newFiles = uploadedFiles.filter((f) => f.name !== fileName)
+    setUploadedFiles(newFiles)
+    syncPaperCount(newFiles.length)
+  }
+
   const runOperation = async () => {
     if (activeTab === 'contradiction' && (!domain || !userPaperFile)) return alert('Domain and your User Paper PDF are required.')
     if (activeTab === 'validation' && !userPaperFile) return alert('Your User Paper PDF is required for validation.')
@@ -96,28 +155,30 @@ export default function ProjectOperationsPage() {
     setLoading(true)
     setResult(null)
     try {
-      const formData = new FormData()
-      formData.append('operation', activeTab)
-      formData.append('domain', domain)
-      formData.append('context', contextInput)
-      
-      uploadedFiles.forEach(file => {
-        formData.append('repoFiles', file)
-      })
-
-      if (userPaperFile) {
-        formData.append('userFile', userPaperFile)
+      const payload = {
+        operation: activeTab,
+        domain: domain,
+        context: contextInput,
+        userId: userId,
+        projectId: projectId,
+        repoFiles: uploadedFiles.map(f => f.name),
+        userFile: userPaperFile ? userPaperFile.name : null
       }
 
       const res = await fetch('/api/analyze', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
       })
       
       const data = await res.json()
       if (res.ok) {
         setResult(data.result)
-        await localforage.setItem(`ai_output_${projectId}`, data.result)
+        if (!projectId.startsWith('mock')) {
+             await supabase.from('projects').update({ ai_output: data.result }).eq('id', projectId)
+        }
       } else {
         setResult('Error: ' + data.error)
       }
@@ -172,13 +233,13 @@ export default function ProjectOperationsPage() {
             <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
               <UploadCloud className="w-5 h-5 text-primary" /> Repository
             </h2>
-            <p className="text-sm text-foreground/60 mb-6">Upload literature and reference PDFs for RAG context. Auto-saved globally.</p>
+            <p className="text-sm text-foreground/60 mb-6">Upload literature and reference PDFs for RAG context. Auto-saved globally to Supabase.</p>
 
-            <label className="border-2 border-dashed border-input hover:border-primary/50 hover:bg-primary/5 transition-colors rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer mb-6 text-center">
+            <label className="border-2 border-dashed border-input hover:border-primary/50 hover:bg-primary/5 transition-colors rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer mb-6 text-center disabled:opacity-50">
               <UploadCloud className="w-10 h-10 text-primary/50 mb-4" />
               <span className="text-sm font-medium text-foreground">Click to upload Repository PDFs</span>
-              <span className="text-xs text-foreground/50 mt-1">Files saved entirely locally in your browser cache.</span>
-              <input type="file" multiple accept=".pdf" className="hidden" onChange={handleRepoUpload} />
+              <span className="text-xs text-foreground/50 mt-1">Files saved entirely in the cloud.</span>
+              <input type="file" multiple accept=".pdf" className="hidden" onChange={handleRepoUpload} disabled={loading} />
             </label>
 
             <div className="flex-1">
@@ -194,13 +255,9 @@ export default function ProjectOperationsPage() {
                     >
                       <span className="truncate pr-4 text-foreground/80 font-medium">{file.name}</span>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs text-foreground/40">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                        <span className="text-xs text-foreground/40">{((file.metadata?.size || 0) / 1024 / 1024).toFixed(2)} MB</span>
                         <button 
-                          onClick={async () => {
-                             const newFiles = uploadedFiles.filter((_, idx) => idx !== i)
-                             setUploadedFiles(newFiles)
-                             await localforage.setItem(`repo_files_${projectId}`, newFiles)
-                          }}
+                          onClick={() => handleRemoveRepoFile(file.name)}
                           className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/10 hover:text-red-500 rounded text-foreground/40 transition-all"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
@@ -244,15 +301,15 @@ export default function ProjectOperationsPage() {
                 >
                   
                   {(activeTab === 'contradiction' || activeTab === 'hypothesis') && (
-                    <div className="space-y-1.5 shrink-0">
-                      <label className="text-sm font-medium text-foreground/80">Research Domain <span className="text-red-500">*</span></label>
-                      <input 
-                        value={domain} onChange={e => handleDomainChange(e.target.value)}
-                        placeholder="e.g., Quantum Computing, Oncology..."
-                        className="w-full bg-input/40 border border-input focus:border-primary px-4 py-2.5 rounded-xl outline-none text-foreground text-sm transition-all"
-                      />
-                    </div>
-                  )}
+                     <div className="space-y-1.5 shrink-0">
+                       <label className="text-sm font-medium text-foreground/80">Research Domain <span className="text-red-500">*</span></label>
+                       <input 
+                         value={domain} onChange={e => handleDomainChange(e.target.value)}
+                         placeholder="e.g., Quantum Computing, Oncology..."
+                         className="w-full bg-input/40 border border-input focus:border-primary px-4 py-2.5 rounded-xl outline-none text-foreground text-sm transition-all"
+                       />
+                     </div>
+                   )}
 
                   {(activeTab === 'contradiction' || activeTab === 'validation') && (
                     <div className="space-y-3 flex-1 flex flex-col shrink-0 min-h-[150px]">
@@ -263,7 +320,7 @@ export default function ProjectOperationsPage() {
                         ) : (
                            <span className="text-foreground/50">Click to upload your research paper PDF</span>
                         )}
-                        <input type="file" accept=".pdf" className="hidden" onChange={handleUserPaperUpload} />
+                        <input type="file" accept=".pdf" className="hidden" onChange={handleUserPaperUpload} disabled={loading} />
                       </label>
                     </div>
                   )}
@@ -300,7 +357,6 @@ export default function ProjectOperationsPage() {
                 className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-xl shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Run Supercompute'}
-                
               </button>
 
               <AnimatePresence>
