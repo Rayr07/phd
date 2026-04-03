@@ -31,43 +31,62 @@ export default function ProjectOperationsPage() {
   const [result, setResult] = useState<string | null>(null)
 
   useEffect(() => {
-    // Fetch project title
-    async function loadProject() {
+    async function loadProjectState() {
       if (!projectId.startsWith('mock')) {
-        const { data } = await supabase.from('projects').select('name').eq('id', projectId).single()
-        if (data) setProjectName(data.name)
+        // Load basic states
+        const { data } = await supabase.from('projects').select('name, domain, ai_output').eq('id', projectId).single()
+        if (data) {
+          setProjectName(data.name || 'Untitled Project')
+          if (data.domain) setDomain(data.domain)
+          if (data.ai_output) setResult(data.ai_output)
+        }
+
+        // Load Repo Files from Workspace Bucket
+        const { data: repoList } = await supabase.storage.from('workspace_files').list(`${projectId}/repo`)
+        if (repoList && repoList.length > 0) {
+          const fetchedFiles = await Promise.all(repoList.map(async (fileMeta) => {
+            if (fileMeta.name === '.emptyFolderPlaceholder') return null
+            const { data: blob } = await supabase.storage.from('workspace_files').download(`${projectId}/repo/${fileMeta.name}`)
+            if (blob) return new File([blob], fileMeta.name, { type: 'application/pdf' })
+            return null
+          }))
+          setUploadedFiles(fetchedFiles.filter(Boolean) as File[])
+        }
+
+        // Load User Paper
+        const { data: userList } = await supabase.storage.from('workspace_files').list(`${projectId}/userFile`)
+        if (userList && userList.length > 0 && userList[0].name !== '.emptyFolderPlaceholder') {
+          const fileMeta = userList[0]
+          const { data: blob } = await supabase.storage.from('workspace_files').download(`${projectId}/userFile/${fileMeta.name}`)
+          if (blob) setUserPaperFile(new File([blob], fileMeta.name, { type: 'application/pdf' }))
+        }
       }
     }
-    loadProject()
-
-    // Load persisted files and state from localforage
-    async function loadLocalForage() {
-      const files = await localforage.getItem<File[]>(`repo_files_${projectId}`)
-      if (files) setUploadedFiles(files)
-
-      const userFile = await localforage.getItem<File>(`user_file_${projectId}`)
-      if (userFile) setUserPaperFile(userFile)
-        
-      const savedOutput = await localforage.getItem<string>(`ai_output_${projectId}`)
-      if (savedOutput) setResult(savedOutput)
-        
-      const savedDomain = await localforage.getItem<string>(`domain_${projectId}`)
-      if (savedDomain) setDomain(savedDomain)
-    }
-    loadLocalForage()
+    loadProjectState()
   }, [projectId])
 
   const handleDomainChange = async (val: string) => {
     setDomain(val)
-    await localforage.setItem(`domain_${projectId}`, val)
+    if (!projectId.startsWith('mock')) {
+      await supabase.from('projects').update({ domain: val }).eq('id', projectId)
+    }
   }
 
   const handleRepoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles = [...uploadedFiles, ...Array.from(e.target.files)]
-      setUploadedFiles(newFiles)
-      // Persist
-      await localforage.setItem(`repo_files_${projectId}`, newFiles)
+      const files = Array.from(e.target.files)
+      setUploadedFiles(prev => [...prev, ...files])
+      
+      if (!projectId.startsWith('mock')) {
+        for (const file of files) {
+          await supabase.storage.from('workspace_files').upload(`${projectId}/repo/${file.name}`, file, { upsert: true })
+        }
+        // Increment paper count
+        const { data } = await supabase.from('projects').select('paper_count').eq('id', projectId).single()
+        if (data) {
+          await supabase.from('projects').update({ paper_count: data.paper_count + files.length }).eq('id', projectId)
+        }
+      }
     }
   }
 
@@ -75,7 +94,14 @@ export default function ProjectOperationsPage() {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0]
       setUserPaperFile(file)
-      await localforage.setItem(`user_file_${projectId}`, file)
+      if (!projectId.startsWith('mock')) {
+        // We delete contents of userFile folder first to avoid retaining old garbage
+        const { data: oldFiles } = await supabase.storage.from('workspace_files').list(`${projectId}/userFile`)
+        if (oldFiles && oldFiles.length > 0) {
+          await supabase.storage.from('workspace_files').remove(oldFiles.map(f => `${projectId}/userFile/${f.name}`))
+        }
+        await supabase.storage.from('workspace_files').upload(`${projectId}/userFile/${file.name}`, file, { upsert: true })
+      }
     }
   }
 
@@ -84,6 +110,19 @@ export default function ProjectOperationsPage() {
       setIsEditingName(false)
       if (!projectId.startsWith('mock')) {
         await supabase.from('projects').update({ name: projectName.trim() }).eq('id', projectId)
+      }
+    }
+  }
+
+  const deleteRepoFile = async (i: number, file: File) => {
+    const newFiles = uploadedFiles.filter((_, idx) => idx !== i)
+    setUploadedFiles(newFiles)
+    
+    if (!projectId.startsWith('mock')) {
+      await supabase.storage.from('workspace_files').remove([`${projectId}/repo/${file.name}`])
+      const { data } = await supabase.from('projects').select('paper_count').eq('id', projectId).single()
+      if (data && data.paper_count > 0) {
+        await supabase.from('projects').update({ paper_count: data.paper_count - 1 }).eq('id', projectId)
       }
     }
   }
@@ -117,7 +156,9 @@ export default function ProjectOperationsPage() {
       const data = await res.json()
       if (res.ok) {
         setResult(data.result)
-        await localforage.setItem(`ai_output_${projectId}`, data.result)
+        if (!projectId.startsWith('mock')) {
+           await supabase.from('projects').update({ ai_output: data.result }).eq('id', projectId)
+        }
       } else {
         setResult('Error: ' + data.error)
       }
@@ -196,11 +237,7 @@ export default function ProjectOperationsPage() {
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-xs text-foreground/40">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
                         <button 
-                          onClick={async () => {
-                             const newFiles = uploadedFiles.filter((_, idx) => idx !== i)
-                             setUploadedFiles(newFiles)
-                             await localforage.setItem(`repo_files_${projectId}`, newFiles)
-                          }}
+                          onClick={() => deleteRepoFile(i, file)}
                           className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/10 hover:text-red-500 rounded text-foreground/40 transition-all"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
@@ -300,7 +337,7 @@ export default function ProjectOperationsPage() {
                 className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-xl shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Run Supercompute'}
-                {!loading && <Sparkles className="w-4 h-4 opacity-70" />}
+                
               </button>
 
               <AnimatePresence>
