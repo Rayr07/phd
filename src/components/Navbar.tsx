@@ -28,9 +28,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded bg-primary text-white flex items-center justify-center font-bold font-serif shadow-md transition-transform hover:scale-105">
-            P
-          </div>
+          <img src="/logo.svg" alt="Logo" className="w-8 h-8 transition-transform hover:scale-105" />
           <span className="font-semibold text-lg tracking-tight text-foreground hidden sm:block">
             PHD Platform
           </span>

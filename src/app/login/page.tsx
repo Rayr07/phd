@@ -90,7 +90,7 @@ export default function LoginPage() {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-accent/20 flex items-center justify-center disabled:opacity-70"
+              className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-accent/20 flex items-center justify-center disabled:opacity-70 dark:bg-[#5f9598] dark:hover:bg-[#4a7a7c]"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
             </button>
