@@ -83,19 +83,19 @@ export function ProjectModal({ isOpen, type, projectName, onConfirm, onCancel }:
             <div
               className={`pointer-events-auto w-full max-w-md mx-4 rounded-2xl shadow-2xl border ${
                 isDark
-                  ? 'bg-slate-900 border-slate-700'
+                  ? 'bg-gray-800 border-gray-600'
                   : 'bg-white border-slate-200'
               }`}
             >
               {/* Header */}
               <div className={`flex items-center justify-between p-6 border-b ${
-                isDark ? 'border-slate-700' : 'border-slate-200'
+                isDark ? 'border-gray-600' : 'border-slate-200'
               }`}>
                 <div className="flex items-center gap-3">
                   {type === 'rename' ? (
                     <>
                       <div className={`p-2 rounded-lg ${
-                        isDark ? 'bg-gray-500/20' : 'bg-gray-100'
+                        isDark ? 'bg-blue-500/20' : 'bg-blue-100'
                       }`}>
                         <Edit2 className={`w-5 h-5 ${
                           isDark ? 'text-blue-400' : 'text-blue-600'
@@ -124,7 +124,7 @@ export function ProjectModal({ isOpen, type, projectName, onConfirm, onCancel }:
                   onClick={handleCancel}
                   className={`p-1 rounded-lg transition-colors ${
                     isDark
-                      ? 'hover:bg-slate-800 text-slate-400 hover:text-slate-200'
+                      ? 'hover:bg-gray-700 text-gray-400 hover:text-gray-200'
                       : 'hover:bg-slate-100 text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -152,8 +152,8 @@ export function ProjectModal({ isOpen, type, projectName, onConfirm, onCancel }:
                       autoFocus
                       className={`w-full px-4 py-2.5 rounded-lg border transition-all focus:outline-none focus:ring-2 ${
                         isDark
-                          ? `bg-slate-800 border-slate-600 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500/20`
-                          : `bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-blue-100`
+                          ? `bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-[#5f9598] focus:ring-[#5f9598]/20`
+                          : `bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-[#465c88] focus:ring-[#465c88]/20`
                       } ${error ? (isDark ? 'border-red-500 focus:border-red-500' : 'border-red-400') : ''}`}
                       placeholder="New project name"
                     />
@@ -181,13 +181,13 @@ export function ProjectModal({ isOpen, type, projectName, onConfirm, onCancel }:
 
               {/* Footer */}
               <div className={`flex items-center justify-end gap-3 p-6 border-t ${
-                isDark ? 'border-slate-700' : 'border-slate-200'
+                isDark ? 'border-gray-600' : 'border-slate-200'
               }`}>
                 <button
                   onClick={handleCancel}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     isDark
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-900'
                   }`}
                 >
@@ -198,7 +198,9 @@ export function ProjectModal({ isOpen, type, projectName, onConfirm, onCancel }:
                   className={`px-4 py-2 rounded-lg font-medium text-white transition-colors ${
                     type === 'delete'
                       ? 'bg-red-500 hover:bg-red-600'
-                      : 'bg-blue-500 hover:bg-blue-600'
+                      : isDark
+                        ? 'bg-[#5f9598] hover:bg-[#4a7a7c]'
+                        : 'bg-[#465c88] hover:bg-[#3a4a6b]'
                   }`}
                 >
                   {type === 'delete' ? 'Delete' : 'Rename'}
