@@ -28,10 +28,15 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         <div className="flex items-center gap-2">
-          <span className={`font-semibold text-lg tracking-tight hidden sm:block transition duration-200 ease-out hover:opacity-90 ${
+          <span className={`font-bold text-lg tracking-tight hidden sm:block transition duration-200 ease-out hover:opacity-90 ${
             theme === 'dark' ? 'text-[#5f9598]' : 'text-[#ff7a30]'
           }`}>
-            PHD Platform
+            PHD 
+          </span>
+           <span className={`font-semibold text-lg tracking-tight hidden sm:block transition duration-200 ease-out hover:opacity-90 ${
+            theme === 'dark' ? 'text-white' : 'text-black'
+          }`}>
+            PLATFORM
           </span>
         </div>
 
