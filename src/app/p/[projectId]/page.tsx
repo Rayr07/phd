@@ -179,14 +179,30 @@ export default function ProjectOperationsPage() {
         body: JSON.stringify(payload)
       })
       
-      const data = await res.json()
-      if (res.ok) {
-        setResult(data.result)
-        if (!projectId.startsWith('mock')) {
-             await supabase.from('projects').update({ ai_output: data.result }).eq('id', projectId)
-        }
-      } else {
-        setResult('Error: ' + data.error)
+      if (!res.ok) {
+        let errDesc = 'Unknown error'
+        try { const errObj = await res.json(); errDesc = errObj.error } catch(e) {}
+        setResult('Error: ' + errDesc)
+        return
+      }
+
+      setResult('')
+      const reader = res.body?.getReader()
+      if (!reader) throw new Error('Stream not available')
+
+      const decoder = new TextDecoder()
+      let fullText = ""
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        const chunk = decoder.decode(value, { stream: true })
+        fullText += chunk
+        setResult(fullText)
+      }
+
+      if (!projectId.startsWith('mock')) {
+        await supabase.from('projects').update({ ai_output: fullText }).eq('id', projectId)
       }
     } catch (err) {
       console.error(err)

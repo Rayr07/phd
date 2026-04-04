@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { generateText } from 'ai'
+import { streamText } from 'ai'
 import { google } from '@ai-sdk/google'
 import { createClient } from '@/utils/supabase/server'
 
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     }
 
     // 6. Generate Supercompute output payload
-    const { text: result } = await generateText({
+    const result = streamText({
       model: google('gemini-2.5-flash'),
       system: systemInstruction,
       messages: [
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       ]
     })
 
-    return NextResponse.json({ result })
+    return result.toTextStreamResponse()
 
   } catch (error: any) {
     console.error('Analysis Error:', error)
