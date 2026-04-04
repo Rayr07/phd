@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Navbar } from '@/components/Navbar'
 import { ProjectCard } from '@/components/ProjectCard'
+import { ProjectModal } from '@/components/ProjectModal'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Plus, Filter, SortDesc, DatabaseZap } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
@@ -27,6 +28,10 @@ export default function WorkspacePage() {
   const [filterBy, setFilterBy] = useState<FilterOption>('all')
   const [loading, setLoading] = useState(true)
   const [dbError, setDbError] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalType, setModalType] = useState<'rename' | 'delete'>('rename')
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('')
+  const [selectedProjectName, setSelectedProjectName] = useState<string>('')
 
   const supabase = createClient()
 
@@ -122,8 +127,30 @@ export default function WorkspacePage() {
     })
   }
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this workspace?')) {
+  const handleDelete = (id: string) => {
+    const project = projects.find(p => p.id === id)
+    if (project) {
+      setSelectedProjectId(id)
+      setSelectedProjectName(project.name)
+      setModalType('delete')
+      setModalOpen(true)
+    }
+  }
+
+  const handleRename = (id: string) => {
+    const project = projects.find(p => p.id === id)
+    if (project) {
+      setSelectedProjectId(id)
+      setSelectedProjectName(project.name)
+      setModalType('rename')
+      setModalOpen(true)
+    }
+  }
+
+  const handleModalConfirm = async (newName?: string) => {
+    const id = selectedProjectId
+    
+    if (modalType === 'delete') {
       if (!dbError && !id.startsWith('mock')) {
         await supabase.from('projects').delete().eq('id', id)
       }
@@ -132,12 +159,7 @@ export default function WorkspacePage() {
         if (id.startsWith('mock')) localforage.setItem('mock_projects', next.filter(p => p.id.startsWith('mock')))
         return next
       })
-    }
-  }
-
-  const handleRename = async (id: string) => {
-    const newName = prompt('Enter new project name:')
-    if (newName && newName.trim().length > 0) {
+    } else if (modalType === 'rename' && newName) {
       if (!dbError && !id.startsWith('mock')) {
         await supabase.from('projects').update({ name: newName.trim(), updated_at: new Date().toISOString() }).eq('id', id)
       }
@@ -147,6 +169,16 @@ export default function WorkspacePage() {
         return next
       })
     }
+    
+    setModalOpen(false)
+    setSelectedProjectId('')
+    setSelectedProjectName('')
+  }
+
+  const handleModalCancel = () => {
+    setModalOpen(false)
+    setSelectedProjectId('')
+    setSelectedProjectName('')
   }
 
   const displayedProjects = useMemo(() => {
@@ -260,6 +292,14 @@ export default function WorkspacePage() {
           </motion.div>
         )}
       </main>
+      
+      <ProjectModal
+        isOpen={modalOpen}
+        type={modalType}
+        projectName={selectedProjectName}
+        onConfirm={handleModalConfirm}
+        onCancel={handleModalCancel}
+      />
     </>
   )
 }
