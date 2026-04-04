@@ -28,8 +28,9 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="Logo" className="w-8 h-8 transition-transform hover:scale-105" />
-          <span className="font-semibold text-lg tracking-tight text-foreground hidden sm:block">
+          <span className={`font-semibold text-lg tracking-tight hidden sm:block transition duration-200 ease-out hover:opacity-90 ${
+            theme === 'dark' ? 'text-[#5f9598]' : 'text-[#ff7a30]'
+          }`}>
             PHD Platform
           </span>
         </div>
