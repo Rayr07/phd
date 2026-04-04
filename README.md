@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# PHD Website
 
-First, run the development server:
+## Overview
+**PHD** is a secure, modern web application designed for academic research workflows. It provides authentication, project management, and an operations workspace where users can upload papers, analyze contradictions, validate claims, and generate hypotheses. The interface follows a clean, Overleaf-style layout with Light/Dark mode support.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Authentication
+- **Sign Up Page**
+  - Email, password, re-enter password fields
+  - Password constraints: min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 symbol
+  - OAuth 2.0 integration
+- **Sign In Page**
+  - Email and password fields
+  - Forgot Password link
+  - Sign Up link
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+### Saved Page (Project Management)
+- Projects auto-saved with all data (files, options, metadata)
+- Ordered by **latest updated**
+- Project card actions:
+  - Rename (inline editing)
+  - Delete
+  - Bookmark toggle
+- **Top-right controls (not in topbar):**
+  - New Project → opens Ops Page
+  - Select → multi-select for bulk actions
+  - Bookmark filter → show only bookmarked projects
+- Clicking a project opens the Ops Page with saved content
+- Removed unused three-dot menu (⋯)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Ops Page (Project Workspace)
+- **Header:** Editable project name replaces “Operations Hub”
+- **File Handling:**
+  - Upload via drag-and-drop or button
+  - Files persist with project and reload when reopened
+  - Select button → delete chosen files
+  - Clear button → delete all files
+  - Removed “Process Sources” button
+- **Options (Modes):**
+  1. **Contradict**
+     - Inputs: domain (required), optional prompt, paper upload (required), corpus selector (Uploaded/External/both)
+     - Outputs: contradictions in uploaded paper + contradictions in external papers
+  2. **Claim**
+     - Inputs: paper upload (required)
+     - Outputs: citation validation; highlights incorrect citations
+  3. **Hypothesis**
+     - Inputs: domain (required)
+     - Outputs: gaps per paper, hypotheses for gaps, novel idea suggestions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### Theme & UI
+- **Light Mode Palette:**
+  - Background: `#E9E3DF`
+  - Accent: `#FF7A30`
+  - Secondary: `#465C88`
+  - Text: `#000000`
+- **Dark Mode Palette:**
+  - Background: `#061E29`
+  - Accent: `#1D546D`
+  - Secondary: `#5F9598`
+  - Text: `#F3F4F4`
+- Responsive design for desktop and mobile
+- Inline validation for required fields
+- Overleaf-style project management layout
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Future Enhancements
+- Integration with external academic databases
+- Advanced citation validation
+- Collaborative project sharing
+
+---
