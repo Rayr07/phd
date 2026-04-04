@@ -1,8 +1,13 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
-export async function proxy(request: NextRequest) {
-  return await updateSession(request)
+export default async function proxy(request: NextRequest) {
+  try {
+    return await updateSession(request)
+  } catch (e) {
+    console.error('Proxy error:', e)
+    return NextResponse.next()
+  }
 }
 
 export const config = {
