@@ -95,7 +95,7 @@ export function ProjectModal({ isOpen, type, projectName, onConfirm, onCancel }:
                   {type === 'rename' ? (
                     <>
                       <div className={`p-2 rounded-lg ${
-                        isDark ? 'bg-blue-500/20' : 'bg-blue-100'
+                        isDark ? 'bg-gray-500/20' : 'bg-gray-100'
                       }`}>
                         <Edit2 className={`w-5 h-5 ${
                           isDark ? 'text-blue-400' : 'text-blue-600'
