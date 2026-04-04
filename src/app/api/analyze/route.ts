@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { streamText } from 'ai'
 import { google } from '@ai-sdk/google'
 import { createClient } from '@/utils/supabase/server'
+import { processContextRAG } from '@/utils/rag'
 
 export const maxDuration = 60; // Increase serverless timeout for heavy PDFs
 export const dynamic = "force-dynamic"; // Bypass Vercel 404 caching lock
@@ -66,6 +67,11 @@ export async function POST(req: Request) {
     // Append user focus context
     if (context) {
       messageContent.push({ type: 'text', text: `\n\nUser Notes / Focus Context: ${context}` })
+    }
+
+    // Execute background RAG pipeline (Chunking -> Embedding -> Vector DB)
+    if (context || userFile) {
+      processContextRAG(`Domain: ${domain} | Context: ${context || ''}`, projectId).catch(console.error);
     }
 
     // 5. Structure AI System Instructions
