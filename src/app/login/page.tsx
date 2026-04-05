@@ -94,8 +94,8 @@ export default function LoginPage() {
               disabled={loading}
               className={`w-full font-medium py-2.5 rounded-xl transition-all shadow-lg flex items-center justify-center disabled:opacity-70 ${
                 theme === 'dark' 
-                  ? 'bg-teal-500 hover:bg-teal-600 text-white shadow-teal-500/20' 
-                  : 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20'
+                  ? 'bg-[#5f9598] hover:bg-[#4a7a7c] text-white shadow-[#5f9598]/20' 
+                  : 'bg-[#ff7a30] hover:bg-[#e66526] text-white shadow-[#ff7a30]/20'
               }`}
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
