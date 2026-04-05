@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Bookmark, MoreVertical, Trash2, Edit2, ChevronRight, FileText } from 'lucide-react'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTheme } from './ThemeProvider'
 
 interface Project {
   id: string
@@ -23,6 +24,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project, onToggleBookmark, onDelete, onRename }: ProjectCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { theme } = useTheme()
 
   return (
     <motion.div
@@ -65,7 +67,7 @@ export function ProjectCard({ project, onToggleBookmark, onDelete, onRename }: P
                   onClick={() => { setMenuOpen(false); onRename(project.id) }}
                   className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-2"
                 >
-                  <Edit2 className="w-3.5 h-3.5" /> Rename
+                  <Edit2 className={`w-3.5 h-3.5 ${theme === 'dark' ? 'text-teal-400' : ''}`} /> Rename
                 </button>
                 <button 
                   onClick={() => { setMenuOpen(false); onDelete(project.id) }}

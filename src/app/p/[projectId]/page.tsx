@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import { Navbar } from '@/components/Navbar'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, UploadCloud, Edit3, Loader2, Sparkles, FileSearch, Scale } from 'lucide-react'
+import { ArrowLeft, UploadCloud, Edit3, Loader2, Sparkles, FileSearch, Scale, Lightbulb } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
+import { useTheme } from '@/components/ThemeProvider'
 
 type OperationType = 'contradiction' | 'validation' | 'hypothesis'
 
@@ -19,6 +20,7 @@ export default function ProjectOperationsPage() {
   const params = useParams()
   const projectId = params.projectId as string
   const supabase = createClient()
+  const { theme } = useTheme()
 
   const [projectName, setProjectName] = useState('Untitled Project')
   const [isEditingName, setIsEditingName] = useState(false)
@@ -307,7 +309,7 @@ export default function ProjectOperationsPage() {
                 <FileSearch className="w-4 h-4" /> Claim Check
               </button>
               <button onClick={() => { setActiveTab('hypothesis'); setResult(null) }} className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'hypothesis' ? 'bg-card text-accent shadow-sm' : 'text-foreground/60 hover:text-foreground'}`}>
-                <Sparkles className="w-4 h-4" /> Hypothesis
+                <Lightbulb className="w-4 h-4" /> Hypothesis
               </button>
             </div>
 
@@ -336,7 +338,7 @@ export default function ProjectOperationsPage() {
                   {(activeTab === 'contradiction' || activeTab === 'validation') && (
                     <div className="space-y-3 flex-1 flex flex-col shrink-0 min-h-[150px]">
                       <label className="text-sm font-medium text-foreground/80">Your Paper Output (Upload PDF) <span className="text-red-500">*</span></label>
-                      <label className="w-full block bg-input/40 border border-input focus:border-primary px-4 py-8 rounded-xl outline-none text-foreground text-sm resize-none transition-all cursor-pointer text-center hover:bg-input/60">
+                      <label className={`w-full block ${theme === 'light' ? 'bg-gray-100' : 'bg-input/40'} border border-input focus:border-primary px-4 py-8 rounded-xl outline-none text-foreground text-sm resize-none transition-all cursor-pointer text-center hover:bg-input/60`}>
                         {userPaperFile ? (
                            <span className="font-semibold text-primary block">Ready: {userPaperFile.name} (Click to change)</span>
                         ) : (
@@ -361,7 +363,7 @@ export default function ProjectOperationsPage() {
                   {activeTab === 'hypothesis' && (
                     <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl shrink-0 mt-4">
                       <p className="text-sm text-primary/80 flex items-start gap-2">
-                        <Sparkles className="w-5 h-5 shrink-0" />
+                        <Lightbulb className="w-5 h-5 shrink-0" />
                         Our AI will synthesize uploaded repository literature across the provided domain to locate gaps and recommend truly novel research directions.
                       </p>
                     </div>
@@ -389,7 +391,7 @@ export default function ProjectOperationsPage() {
                     className="p-5 bg-input/40 border border-card rounded-xl"
                   >
                     <h4 className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" /> AI Output
+                      {activeTab === 'hypothesis' ? <Lightbulb className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />} AI Output
                     </h4>
                     <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
                       {result}
