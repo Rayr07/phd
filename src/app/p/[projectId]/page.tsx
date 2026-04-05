@@ -338,7 +338,7 @@ export default function ProjectOperationsPage() {
                   {(activeTab === 'contradiction' || activeTab === 'validation') && (
                     <div className="space-y-3 flex-1 flex flex-col shrink-0 min-h-[150px]">
                       <label className="text-sm font-medium text-foreground/80">Your Paper Output (Upload PDF) <span className="text-red-500">*</span></label>
-                      <label className={`w-full block ${theme === 'light' ? 'bg-gray-100' : 'bg-input/40'} border border-input focus:border-primary px-4 py-8 rounded-xl outline-none text-foreground text-sm resize-none transition-all cursor-pointer text-center hover:bg-input/60`}>
+                      <label className={`w-full block ${theme === 'light' ? 'bg-gray-100' : 'bg-input/40'} border border-input focus:border-primary px-4 py-8 rounded-xl outline-none text-foreground text-sm resize-none transition-all cursor-pointer text-center`}>
                         {userPaperFile ? (
                            <span className="font-semibold text-primary block">Ready: {userPaperFile.name} (Click to change)</span>
                         ) : (
