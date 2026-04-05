@@ -5,10 +5,12 @@ import { login } from '@/app/actions/auth'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Loader2, BookOpen } from 'lucide-react'
+import { useTheme } from '@/components/ThemeProvider'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const { theme } = useTheme()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -90,7 +92,11 @@ export default function LoginPage() {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2.5 rounded-xl transition-all shadow-lg shadow-accent/20 flex items-center justify-center disabled:opacity-70 dark:bg-[#5f9598] dark:hover:bg-[#4a7a7c]"
+              className={`w-full font-medium py-2.5 rounded-xl transition-all shadow-lg flex items-center justify-center disabled:opacity-70 ${
+                theme === 'dark' 
+                  ? 'bg-teal-500 hover:bg-teal-600 text-white shadow-teal-500/20' 
+                  : 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20'
+              }`}
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
             </button>
