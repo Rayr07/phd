@@ -75,16 +75,16 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-24 px-6 min-h-screen bg-white/40 backdrop-blur-sm">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-20 bg-white/60 p-8 rounded-3xl inline-block w-full backdrop-blur-md shadow-sm border border-white/40">
+        <section id="features" className="py-24 px-6 min-h-screen relative z-10 w-full relative">
+          <div className="max-w-5xl mx-auto relative z-10">
+            <div className="text-center mb-20 bg-white/30 p-8 rounded-3xl inline-block w-full backdrop-blur-sm shadow-sm border border-white/20">
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">Core Capabilities</h2>
               <p className="text-xl text-zinc-600 font-medium">Everything you need to orchestrate and validate your research.</p>
             </div>
 
             <div className="space-y-12">
               {/* Feature 1 */}
-              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/80 backdrop-blur-md border border-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/40 backdrop-blur-sm border border-white/50 hover:bg-white/60 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold shadow-inner">
                   01
                 </div>
@@ -97,7 +97,7 @@ export default function Home() {
               </div>
 
               {/* Feature 2 */}
-              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/80 backdrop-blur-md border border-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/40 backdrop-blur-sm border border-white/50 hover:bg-white/60 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold shadow-inner">
                   02
                 </div>
@@ -110,7 +110,7 @@ export default function Home() {
               </div>
 
               {/* Feature 3 */}
-              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/80 backdrop-blur-md border border-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/40 backdrop-blur-sm border border-white/50 hover:bg-white/60 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold shadow-inner">
                   03
                 </div>
@@ -123,7 +123,7 @@ export default function Home() {
               </div>
 
               {/* Feature 4 */}
-              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/80 backdrop-blur-md border border-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-white/40 backdrop-blur-sm border border-white/50 hover:bg-white/60 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold shadow-inner">
                   04
                 </div>
