@@ -364,7 +364,7 @@ export default function ProjectOperationsPage() {
                     <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl shrink-0 mt-4">
                       <p className="text-sm text-primary/80 flex items-start gap-2">
                         <Lightbulb className="w-5 h-5 shrink-0" />
-                        Our AI will synthesize uploaded repository literature across the provided domain to locate gaps and recommend truly novel research directions.
+                        This section tries to provide a novel idea based on the research domain and the literature gaps in the provided papers.
                       </p>
                     </div>
                   )}

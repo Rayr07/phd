@@ -12,7 +12,7 @@ export function FeatureHighlightsSection() {
     },
     {
       title: "Hypothesis Generation",
-      description: "This section tries to provide a novel idea based on the research domain and the literature gaps in the provided papers.",
+      description: "Turn the AI into an active sounding board. By synthesizing logged data, it can proactively propose novel research directions, missing links, and unexplored hypotheses.",
       number: "03"
     }
   ];
