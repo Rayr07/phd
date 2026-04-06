@@ -8,7 +8,6 @@ import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { ProjectDashboard } from "@/components/landing/ProjectDashboard";
 import { FeatureHighlightsSection } from "@/components/landing/FeatureHighlightsSection";
 import { CtaSection } from "@/components/landing/CtaSection";
-import { ContactForm } from "@/components/landing/ContactForm";
 import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
@@ -42,7 +41,6 @@ export default function Home() {
         <ProjectDashboard />
         <FeatureHighlightsSection />
         <CtaSection />
-        <ContactForm />
       </main>
       <Footer />
     </div>

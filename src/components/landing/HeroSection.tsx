@@ -28,14 +28,14 @@ export function HeroSection() {
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <Link 
             href="/signup" 
-            className="w-full sm:w-auto group flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-[#e66a25] text-white rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-[0_4px_20px_rgba(255,122,48,0.3)]"
+            className="w-full sm:w-auto group flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-[#e66a25] dark:bg-primary dark:hover:bg-[#4d7b7e] text-white rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-[0_4px_20px_rgba(255,122,48,0.3)] dark:shadow-[0_4px_20px_rgba(95,149,152,0.3)]"
           >
             Start Analyzing
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
           <a 
             href="#how-it-works" 
-            className="w-full sm:w-auto px-8 py-4 bg-background hover:bg-card border-2 border-accent/20 hover:border-accent/50 text-foreground rounded-full font-semibold text-lg transition-all duration-300"
+            className="w-full sm:w-auto px-8 py-4 bg-background hover:bg-card border-2 border-accent/20 hover:border-accent/50 dark:border-primary/50 dark:hover:border-primary/80 text-foreground rounded-full font-semibold text-lg transition-all duration-300"
           >
             See How it Works
           </a>

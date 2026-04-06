@@ -19,7 +19,7 @@ export function CtaSection() {
           </p>
           <Link 
             href="/signup" 
-            className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-accent hover:bg-[#e66a25] text-white rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-[0_8px_30px_rgba(255,122,48,0.4)]"
+            className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-accent hover:bg-[#e66a25] dark:bg-primary dark:hover:bg-[#4d7b7e] text-white rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-[0_8px_30px_rgba(255,122,48,0.4)] dark:shadow-[0_8px_30px_rgba(95,149,152,0.4)]"
           >
             Create Your Workspace
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

@@ -50,7 +50,7 @@ export function Header() {
           </Link>
           <Link 
             href="/signup" 
-            className="px-5 py-2 text-sm font-semibold rounded-full bg-accent hover:bg-[#e66a25] text-white transition-all transform hover:scale-105 shadow-[0_4px_14px_rgba(255,122,48,0.3)]"
+            className="px-5 py-2 text-sm font-semibold rounded-full bg-accent hover:bg-[#e66a25] dark:bg-primary dark:hover:bg-[#4d7b7e] text-white transition-all transform hover:scale-105 shadow-[0_4px_14px_rgba(255,122,48,0.3)] dark:shadow-[0_4px_14px_rgba(95,149,152,0.3)]"
           >
             Get Started
           </Link>
