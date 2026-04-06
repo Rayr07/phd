@@ -1,63 +1,145 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { SpeckleBackground } from '@/components/SpeckleBackground';
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
-      {/* Dynamic Animated Background */}
-      <SpeckleBackground />
-
-      {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center p-8 text-center max-w-4xl mx-auto">
-        <div className="space-y-6 backdrop-blur-md bg-card/40 dark:bg-card/20 p-12 rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl transition-all duration-500 hover:shadow-primary/20">
-          
-          <div className="flex justify-center mb-6">
-            <Image 
-              src="/logo.svg" 
-              alt="PHD Logo" 
-              width={200} 
-              height={200} 
-              className="drop-shadow-lg object-contain"
-              priority
-            />
-          </div>
-          
-          <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto leading-relaxed mt-4">
-            A secure, luxurious web application for researchers to manage projects, validate claims, and generate hypotheses using state-of-the-art AI.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-foreground/70 max-w-3xl mx-auto pt-4 pb-4">
-            <div className="p-4 bg-card/30 rounded-xl border border-white/10 hover:bg-card/50 transition-colors">
-              <strong className="block text-primary dark:text-accent mb-2">Contradiction Detection</strong>
-              Log your sources and let the AI find conceptual clashes automatically.
-            </div>
-            <div className="p-4 bg-card/30 rounded-xl border border-white/10 hover:bg-card/50 transition-colors">
-              <strong className="block text-primary dark:text-accent mb-2">Claim Validation</strong>
-              Upload documents and verify if claims are strongly supported by underlying evidence.
-            </div>
-            <div className="p-4 bg-card/30 rounded-xl border border-white/10 hover:bg-card/50 transition-colors">
-              <strong className="block text-primary dark:text-accent mb-2">Hypothesis Generation</strong>
-              Let our AI act as a sounding board, proposing new research directions based on your data.
-            </div>
-          </div>
-
-          <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-            <Link 
-              href="/login" 
-              className="w-full sm:w-auto px-8 py-4 bg-primary hover:bg-primary/90 text-white rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(70,92,136,0.3)] dark:shadow-[0_0_20px_rgba(95,149,152,0.3)]"
-            >
-              Sign In
-            </Link>
-            <Link 
-              href="/signup" 
-              className="w-full sm:w-auto px-8 py-4 bg-card hover:bg-card/90 text-foreground border border-foreground/10 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
-            >
-              Sign Up
-            </Link>
+    <div className="bg-white text-zinc-900 min-h-screen font-sans selection:bg-[#ff7a30] selection:text-white">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-200">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="font-bold text-xl tracking-tight text-[#ff7a30]">PHD</div>
+          <div className="flex gap-8 text-sm font-medium text-zinc-600">
+            <a href="#home" className="hover:text-[#ff7a30] transition-colors">Home</a>
+            <a href="#description" className="hover:text-[#ff7a30] transition-colors">Description</a>
+            <a href="#features" className="hover:text-[#ff7a30] transition-colors">Features</a>
           </div>
         </div>
-      </div>
-    </main>
+      </nav>
+
+      {/* Container for smooth scrolling */}
+      <main className="scroll-smooth">
+        
+        {/* Home Section */}
+        <section id="home" className="min-h-screen flex flex-col items-center justify-center pt-20 px-6">
+          <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <div className="mb-4">
+              <Image 
+                src="/logo.svg" 
+                alt="PHD Logo" 
+                width={240} 
+                height={240} 
+                className="drop-shadow-lg object-contain transition-transform duration-500 hover:scale-105"
+                priority
+              />
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-[#ff7a30] drop-shadow-sm mb-12">
+              PHD
+            </h1>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
+              <Link 
+                href="/login" 
+                className="w-full sm:w-auto px-10 py-4 bg-[#ff7a30] hover:bg-[#e66a25] text-white rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-[0_4px_20px_rgba(255,122,48,0.3)]"
+              >
+                Sign In
+              </Link>
+              <Link 
+                href="/signup" 
+                className="w-full sm:w-auto px-10 py-4 bg-white hover:bg-zinc-50 text-[#ff7a30] border-2 border-[#ff7a30] rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-sm"
+              >
+                Sign Up
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Description Section */}
+        <section id="description" className="min-h-[80vh] flex items-center justify-center bg-zinc-50 py-24 px-6 border-y border-zinc-100">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-orange-100 text-[#ff7a30] font-semibold text-sm tracking-wide uppercase">
+              The Mission
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-8 leading-tight">
+              An ecosystem designed for meticulous research and discovery.
+            </h2>
+            <p className="text-xl md:text-2xl text-zinc-600 leading-relaxed max-w-3xl mx-auto">
+              PHD is a secure, luxurious web application tailored for researchers who demand precision. It bridges the gap between managing complex projects and leveraging state-of-the-art AI to validate claims, detect conceptual clashes, and synthesize novel hypotheses.
+            </p>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="py-24 px-6 bg-white min-h-screen">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 mb-4">Core Capabilities</h2>
+              <p className="text-xl text-zinc-500">Everything you need to orchestrate and validate your research.</p>
+            </div>
+
+            <div className="space-y-12">
+              {/* Feature 1 */}
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-zinc-50 border border-zinc-100 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold">
+                  01
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-zinc-900 mb-3">Workspace Management</h3>
+                  <p className="text-lg text-zinc-600 leading-relaxed">
+                    Organize your files, papers, and sources in a pristine, dedicated environment. Navigate through your projects with unparalleled speed and organization, keeping your research structured and accessible.
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-zinc-50 border border-zinc-100 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold">
+                  02
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-zinc-900 mb-3">Contradiction Detection</h3>
+                  <p className="text-lg text-zinc-600 leading-relaxed">
+                    Log your vast array of sources and allow our advanced AI to automatically scan and identify conceptual clashes or conflicting data points across thousands of pages instantly.
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-zinc-50 border border-zinc-100 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold">
+                  03
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-zinc-900 mb-3">Claim Validation</h3>
+                  <p className="text-lg text-zinc-600 leading-relaxed">
+                    Upload new documentation and run rigorous checks to verify whether external claims are genuinely and strongly supported by your underlying ground-truth evidence.
+                  </p>
+                </div>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="flex flex-col md:flex-row gap-8 p-8 rounded-3xl bg-zinc-50 border border-zinc-100 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-2xl bg-orange-100 text-[#ff7a30] text-2xl font-bold">
+                  04
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-zinc-900 mb-3">Hypothesis Generation</h3>
+                  <p className="text-lg text-zinc-600 leading-relaxed">
+                    Turn the AI into an active sounding board. By synthesizing logged data, it can proactively propose novel research directions, missing links, and unexplored hypotheses.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </section>
+
+        {/* Simple Footer */}
+        <footer className="py-8 text-center text-zinc-500 border-t border-zinc-200 text-sm">
+          <p>© {new Date().getFullYear()} PHD Workspace. All rights reserved.</p>
+        </footer>
+
+      </main>
+    </div>
   );
 }
