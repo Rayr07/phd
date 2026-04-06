@@ -17,8 +17,6 @@ export function Footer() {
 
         <div className="flex gap-6 text-sm font-medium text-foreground/70">
           <Link href="/login" className="hover:text-accent transition-colors">Log In</Link>
-          <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-accent transition-colors">Terms of Service</a>
         </div>
       </div>
     </footer>

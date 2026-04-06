@@ -19,7 +19,7 @@ export function Header() {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-background/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 py-3 shadow-sm" : "bg-transparent py-5"}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-lg transform group-hover:scale-105 transition-transform">
+          <div className="w-8 h-8 rounded-lg bg-accent dark:bg-primary text-white flex items-center justify-center font-bold text-lg transform group-hover:scale-105 transition-transform">
             P
           </div>
           <span className="font-bold text-xl tracking-tight text-foreground">
