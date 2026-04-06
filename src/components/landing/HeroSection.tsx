@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, FileText, CheckCircle } from "lucide-react";
 
 export function HeroSection() {
@@ -6,6 +7,17 @@ export function HeroSection() {
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-32 pb-20 px-6 section-fade">
       <div className="max-w-4xl mx-auto text-center z-10 flex flex-col items-center">
         
+        <div className="mb-6">
+          <Image 
+            src="/logo.svg" 
+            alt="PHD Logo" 
+            width={120} 
+            height={120} 
+            className="drop-shadow-lg object-contain transition-transform duration-500 hover:scale-105"
+            priority
+          />
+        </div>
+
         <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent font-semibold text-sm tracking-wide shadow-sm backdrop-blur-sm transform transition-transform hover:scale-105">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>

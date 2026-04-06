@@ -36,7 +36,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           <button 
             onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-foreground"
+            className="p-2 rounded-full hover:bg-[#ff7a30]/10 dark:hover:bg-[#ff7a30]/20 hover:text-[#ff7a30] transition-colors text-foreground"
             aria-label="Toggle Dark Mode"
           >
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
@@ -44,7 +44,7 @@ export function Header() {
           
           <Link 
             href="/login" 
-            className="hidden sm:inline-flex px-5 py-2 text-sm font-semibold rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-foreground"
+            className="hidden sm:inline-flex px-5 py-2 text-sm font-semibold rounded-full hover:bg-[#ff7a30]/10 dark:hover:bg-[#ff7a30]/20 hover:text-[#ff7a30] transition-colors text-foreground"
           >
             Log in
           </Link>
