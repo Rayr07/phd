@@ -58,8 +58,8 @@ export const SpeckleBackground: React.FC = () => {
           vy: (Math.random() - 0.5) * 0.5,
           radius: Math.random() * 2.5 + 0.5,
           color: SPECKLE_COLORS[Math.floor(Math.random() * SPECKLE_COLORS.length)],
-          alpha: Math.random() * 0.5 + 0.1,
-          targetAlpha: Math.random() * 0.5 + 0.1,
+          alpha: Math.random() * 0.6 + 0.4,
+          targetAlpha: Math.random() * 0.6 + 0.4,
         });
       }
     };
@@ -78,7 +78,7 @@ export const SpeckleBackground: React.FC = () => {
 
         // Gentle pulse effect
         if (Math.abs(p.alpha - p.targetAlpha) < 0.01) {
-            p.targetAlpha = Math.random() * 0.6 + 0.1;
+            p.targetAlpha = Math.random() * 0.6 + 0.4;
         } else {
             p.alpha += (p.targetAlpha - p.alpha) * 0.01;
         }
@@ -106,7 +106,7 @@ export const SpeckleBackground: React.FC = () => {
             
             // Connect line
             ctx.fill();
-            ctx.globalAlpha = (1 - dist / maxDist) * 0.3;
+            ctx.globalAlpha = (1 - dist / maxDist) * 0.6;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(mouse.x, mouse.y);
@@ -155,7 +155,7 @@ export const SpeckleBackground: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.8 }}
+      style={{ opacity: 1 }}
     />
   );
 };
