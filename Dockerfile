@@ -14,6 +14,17 @@ RUN npm ci
 COPY . .
 
 # Build the Next.js application
+ENV HOSTNAME "0.0.0.0"
+ENV PORT 3000
+# Define arguments
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Set them as environment variables for the build process
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Now the build will work
 RUN npm run build
 
 # Expose the port the app runs on
