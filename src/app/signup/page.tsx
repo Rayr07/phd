@@ -37,6 +37,8 @@ export default function SignupPage() {
   }
   validations.sequential = !hasSequentialDigits(password);
 
+  const [showVerification, setShowVerification] = useState(false)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
@@ -46,6 +48,9 @@ export default function SignupPage() {
     if (res?.error) {
       setError(res.error)
       setLoading(false)
+    } else if (res?.success) {
+      setLoading(false)
+      setShowVerification(true)
     }
   }
 
@@ -158,6 +163,38 @@ export default function SignupPage() {
           </p>
         </div>
       </motion.div>
+
+      {showVerification && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="w-full max-w-md bg-card border border-border p-8 rounded-3xl shadow-2xl text-center relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner relative">
+              <Mail className="w-10 h-10 text-primary" />
+              <div className="absolute top-0 right-0 w-6 h-6 bg-background rounded-full flex items-center justify-center">
+                <div className="w-4 h-4 bg-[#ff7a30] rounded-full animate-pulse" />
+              </div>
+            </div>
+            <h2 className="text-3xl font-bold text-foreground mb-3 tracking-tight">Check your email</h2>
+            <p className="text-foreground/70 mb-10 text-lg leading-relaxed">
+              We've sent a secure verification link to your inbox. Please click it to activate your researcher account.
+            </p>
+            <Link 
+              href="/login"
+              className={`inline-block w-full font-bold py-4 rounded-xl transition-all duration-300 transform hover:-translate-y-1 shadow-lg text-white ${
+                theme === 'dark' 
+                  ? 'bg-primary hover:bg-[#4a7a7c] shadow-primary/20' 
+                  : 'bg-accent hover:bg-[#e66526] shadow-accent/20'
+              }`}
+            >
+              Continue to Login
+            </Link>
+          </motion.div>
+        </div>
+      )}
     </main>
   )
 }
