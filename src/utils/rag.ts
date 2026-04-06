@@ -108,7 +108,7 @@ export async function upsertToVectorDB(vectors: any[], namespace: string) {
     }
   }
 
-  // Fallback / Mock Behavior
+  // Fallback Behavior
   console.log(`[Vector DB Mock] Upserting ${vectors.length} vectors into namespace ${namespace}`);
   return true;
 }
