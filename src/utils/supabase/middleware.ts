@@ -31,17 +31,18 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect all routes except auth ones
+  // Protect all routes except auth ones and the landing page
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup') || request.nextUrl.pathname.startsWith('/auth');
+  const isLandingPage = request.nextUrl.pathname === '/';
   
-  if (!user && !isAuthRoute) {
+  if (!user && !isAuthRoute && !isLandingPage) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  // Redirect signed in users away from auth routes to workspace
-  if (user && (isAuthRoute || request.nextUrl.pathname === '/')) {
+  // Redirect signed in users away from auth routes and landing page to workspace
+  if (user && (isAuthRoute || isLandingPage)) {
      const url = request.nextUrl.clone()
      url.pathname = '/workspace'
      return NextResponse.redirect(url)
