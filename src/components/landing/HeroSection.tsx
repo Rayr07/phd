@@ -4,15 +4,15 @@ import { ArrowRight, FileText, CheckCircle } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-32 pb-20 px-6 section-fade">
+    <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-20 px-6 section-fade">
       <div className="max-w-4xl mx-auto text-center z-10 flex flex-col items-center">
-        
+
         <div className="mb-6">
-          <Image 
-            src="/logo.svg" 
-            alt="PHD Logo" 
-            width={120} 
-            height={120} 
+          <Image
+            src="/logo.svg"
+            alt="PHD Logo"
+            width={500}
+            height={500}
             className="drop-shadow-lg object-contain transition-transform duration-500 hover:scale-105"
             priority
           />
@@ -38,15 +38,15 @@ export function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-          <Link 
-            href="/signup" 
+          <Link
+            href="/signup"
             className="w-full sm:w-auto group flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-[#e66a25] dark:bg-primary dark:hover:bg-[#4d7b7e] text-white rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-[0_4px_20px_rgba(255,122,48,0.3)] dark:shadow-[0_4px_20px_rgba(95,149,152,0.3)]"
           >
             Start Analyzing
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
-          <a 
-            href="#how-it-works" 
+          <a
+            href="#how-it-works"
             className="w-full sm:w-auto px-8 py-4 bg-background hover:bg-card border-2 border-accent/20 hover:border-accent/50 dark:border-primary/50 dark:hover:border-primary/80 text-foreground rounded-full font-semibold text-lg transition-all duration-300"
           >
             See How it Works
@@ -67,7 +67,7 @@ export function HeroSection() {
             <span>Instant Insights</span>
           </div>
         </div>
-        
+
       </div>
     </section>
   );

@@ -16,12 +16,12 @@ export function Header() {
   }, []);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-background/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 py-3 shadow-sm" : "bg-transparent py-5"}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-background/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 shadow-sm" : "bg-transparent"}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center group">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-             className="w-28 h-14 text-[#ff7a30] fill-current" viewBox="0 0 1024 544" preserveAspectRatio="xMinYMid meet">
-            <path opacity="1.000000" stroke="none" 
+            className="w-28 h-14 text-[#ff7a30] fill-current" viewBox="0 0 1024 544" preserveAspectRatio="xMinYMid meet">
+            <path opacity="1.000000" stroke="none"
               d="
             M500.452026,384.859070 
               C498.321167,383.781342 496.144745,383.243622 494.844757,381.873962 
@@ -119,7 +119,7 @@ export function Header() {
               C464.832153,361.480225 467.802582,361.060974 470.775543,360.805023 
               C453.551483,355.571747 435.960999,353.510071 417.279236,352.357697 
             z"/>
-            <path opacity="1.000000" stroke="none" 
+            <path opacity="1.000000" stroke="none"
               d="
             M528.647339,207.505188 
               C536.543823,203.324310 544.448730,200.274002 553.075012,199.748505 
@@ -223,7 +223,7 @@ export function Header() {
               C556.360107,402.705627 556.360107,381.146545 556.360107,359.587463 
               C553.211609,366.397552 554.787292,373.528625 554.288452,381.500336 
             z"/>
-            <path opacity="1.000000" stroke="none" 
+            <path opacity="1.000000" stroke="none"
               d="
             M616.473328,321.632812 
               C619.774963,321.594940 620.739380,319.816162 620.521301,317.338715 
@@ -237,7 +237,7 @@ export function Header() {
               C572.707336,333.788055 573.317688,331.614807 576.939575,330.350128 
               C589.653809,325.910553 602.166931,320.812958 616.473328,321.632812 
             z"/>
-            <path opacity="1.000000" stroke="none" 
+            <path opacity="1.000000" stroke="none"
               d="
             M591.089905,184.209152 
               C596.105774,181.857956 596.586548,177.080215 598.561584,172.550598 
@@ -260,22 +260,22 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={toggleTheme}
             className="p-2 rounded-full hover:bg-[#ff7a30]/10 dark:hover:bg-[#ff7a30]/20 hover:text-[#ff7a30] transition-colors text-foreground"
             aria-label="Toggle Dark Mode"
           >
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          
-          <Link 
-            href="/login" 
+
+          <Link
+            href="/login"
             className="hidden sm:inline-flex px-5 py-2 text-sm font-semibold rounded-full hover:bg-[#ff7a30]/10 dark:hover:bg-[#ff7a30]/20 hover:text-[#ff7a30] transition-colors text-foreground"
           >
             Log in
           </Link>
-          <Link 
-            href="/signup" 
+          <Link
+            href="/signup"
             className="px-5 py-2 text-sm font-semibold rounded-full bg-accent hover:bg-[#e66a25] dark:bg-primary dark:hover:bg-[#4d7b7e] text-white transition-all transform hover:scale-105 shadow-[0_4px_14px_rgba(255,122,48,0.3)] dark:shadow-[0_4px_14px_rgba(95,149,152,0.3)]"
           >
             Get Started
