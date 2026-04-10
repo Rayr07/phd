@@ -20,7 +20,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-             className="w-16 h-8 text-[#ff7a30] fill-current" viewBox="0 0 1024 544" preserveAspectRatio="xMinYMid meet">
+             className="w-28 h-14 text-[#ff7a30] fill-current" viewBox="0 0 1024 544" preserveAspectRatio="xMinYMid meet">
             <path opacity="1.000000" stroke="none" 
               d="
             M500.452026,384.859070 
